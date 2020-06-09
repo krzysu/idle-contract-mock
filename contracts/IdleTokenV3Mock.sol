@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "./Ownable.sol";
 
-contract IdleTokenV3Mock is ERC20, ERC20Detailed {
+contract IdleTokenV3Mock is ERC20, ERC20Detailed, Ownable {
   using SafeERC20 for IERC20;
   using SafeMath for uint256;
 
@@ -30,10 +31,9 @@ contract IdleTokenV3Mock is ERC20, ERC20Detailed {
     external
     returns (uint256 mintedTokens)
   {
-    uint256 idlePrice = tokenPrice();
     IERC20(token).safeTransferFrom(msg.sender, address(this), _amount);
 
-    mintedTokens = _amount.div(idlePrice);
+    mintedTokens = _amount.mul(10**18).div(price);
     _mint(msg.sender, mintedTokens);
   }
 
@@ -41,17 +41,16 @@ contract IdleTokenV3Mock is ERC20, ERC20Detailed {
     uint256 _amount,
     bool _skipRebalance,
     uint256[] calldata _clientProtocolAmounts
-  ) external returns (uint256 redeemedTokens) {
-    uint256 idlePrice = tokenPrice();
-    redeemedTokens = _amount.mul(idlePrice);
+  ) external returns (uint256) {
+    uint256 redeemedTokens = _amount.mul(price).div(10**18);
 
     _burn(msg.sender, _amount);
     IERC20(token).safeTransfer(msg.sender, redeemedTokens);
+    return redeemedTokens;
   }
 
   function redeemInterestBearingTokens(uint256 _amount) external {
-    uint256 idlePrice = tokenPrice();
-    uint256 redeemedTokens = _amount.mul(idlePrice);
+    uint256 redeemedTokens = _amount.mul(price).div(10**18);
 
     _burn(msg.sender, _amount);
     IERC20(token).safeTransfer(msg.sender, redeemedTokens);
