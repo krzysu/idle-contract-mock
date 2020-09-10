@@ -1,6 +1,6 @@
-# Idle V3 Smart Contract Mock
+# Idle V3 and V4 Smart Contract Mock
 
-Based on Truffle, this repo allows to deploy mocked Idle V3 contract to Rinkeby testnet.
+Based on Truffle, this repo allows to deploy mocked Idle V3 and V4 contract to Rinkeby testnet.
 
 It offers very basic functionality:
 
